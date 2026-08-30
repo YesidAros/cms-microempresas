@@ -1,4 +1,4 @@
-node_modules/
+clenode_modules/
 dist/
 .env
 *.log
