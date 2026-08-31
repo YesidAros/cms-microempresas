@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Servicio } from '../../servicios/entities/servicio.entity';
 
 @Entity()
 export class Empresa {
@@ -43,4 +44,7 @@ export class Empresa {
 
   @Column({ nullable: true })
   youtubeUrl!: string;
+
+  @OneToMany(() => Servicio, (servicio) => servicio.empresa)
+  servicios!: Servicio[];
 }
