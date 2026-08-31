@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Noticia } from './entities/noticia.entity';
@@ -21,11 +25,22 @@ export class NoticiasService {
     if (!empresa) {
       throw new NotFoundException(`No existe una empresa con id ${empresaId}`);
     }
+
     const nuevaNoticia = this.noticiaRepository.create({
       ...datosNoticia,
       empresa,
     });
-    return this.noticiaRepository.save(nuevaNoticia);
+
+    try {
+      return await this.noticiaRepository.save(nuevaNoticia);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException(
+          `Ya existe una noticia con el slug "${datosNoticia.slug}"`,
+        );
+      }
+      throw error;
+    }
   }
 
   findAll() {
