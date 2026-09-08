@@ -7,6 +7,8 @@ import { EmpresaModule } from './empresa/empresa.module';
 import { ServiciosModule } from './servicios/servicios.module';
 import { NoticiasModule } from './noticias/noticias.module';
 import { BannerModule } from './banner/banner.module';
+import { UsuarioModule } from './usuario/usuario.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { BannerModule } from './banner/banner.module';
     ServiciosModule,
     NoticiasModule,
     BannerModule,
+    UsuarioModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

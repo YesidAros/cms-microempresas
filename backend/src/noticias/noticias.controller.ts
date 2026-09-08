@@ -1,13 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { NoticiasService } from './noticias.service';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('noticias')
 export class NoticiasController {
   constructor(private readonly noticiasService: NoticiasService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Body() createNoticiaDto: CreateNoticiaDto) {
     return this.noticiasService.create(createNoticiaDto);
   }
@@ -23,11 +34,13 @@ export class NoticiasController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateNoticiaDto: UpdateNoticiaDto) {
     return this.noticiasService.update(+id, updateNoticiaDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.noticiasService.remove(+id);
   }
