@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { BannerService } from './banner.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
@@ -19,6 +20,7 @@ export class BannerController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   create(@Body() createBannerDto: CreateBannerDto) {
     return this.bannerService.create(createBannerDto);
   }
@@ -35,12 +37,14 @@ export class BannerController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   update(@Param('id') id: string, @Body() updateBannerDto: UpdateBannerDto) {
     return this.bannerService.update(+id, updateBannerDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.bannerService.remove(+id);
   }
