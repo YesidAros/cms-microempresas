@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Servicio } from '../../servicios/entities/servicio.entity';
 import { Noticia } from '../../noticias/entities/noticia.entity';
 import { Banner } from '../../banner/entities/banner.entity';
+import { Correo } from '../../correo/entities/correo.entity';
 
 @Entity()
 export class Empresa {
@@ -47,6 +48,9 @@ export class Empresa {
   @Column({ nullable: true })
   youtubeUrl!: string;
 
+  @Column({ type: 'text', nullable: true })
+  plantillaCorreoHtml!: string;
+
   @OneToMany(() => Servicio, (servicio) => servicio.empresa)
   servicios!: Servicio[];
 
@@ -55,4 +59,7 @@ export class Empresa {
 
   @OneToMany(() => Banner, (banner) => banner.empresa)
   banners!: Banner[];
+
+  @OneToMany(() => Correo, (correo) => correo.empresa)
+  correos!: Correo[];
 }

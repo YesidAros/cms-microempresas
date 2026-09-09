@@ -9,6 +9,7 @@ import { NoticiasModule } from './noticias/noticias.module';
 import { BannerModule } from './banner/banner.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
+import { CorreoModule } from './correo/correo.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthModule } from './auth/auth.module';
     BannerModule,
     UsuarioModule,
     AuthModule,
+    CorreoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

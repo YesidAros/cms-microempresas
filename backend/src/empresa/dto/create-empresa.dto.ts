@@ -58,4 +58,8 @@ export class CreateEmpresaDto {
   @IsOptional()
   @IsUrl()
   youtubeUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  plantillaCorreoHtml?: string;
 }
