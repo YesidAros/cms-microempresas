@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { Empresa } from './entities/empresa.entity';
 import { CreateEmpresaDto } from './dto/create-empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
+import { ArchivosService } from '../archivos/archivos.service';
 
 @Injectable()
 export class EmpresaService {
   constructor(
     @InjectRepository(Empresa)
     private readonly empresaRepository: Repository<Empresa>,
+    private readonly archivosService: ArchivosService,
   ) {}
 
   create(createEmpresaDto: CreateEmpresaDto) {
@@ -27,6 +29,15 @@ export class EmpresaService {
 
   async update(id: number, updateEmpresaDto: UpdateEmpresaDto) {
     await this.empresaRepository.update(id, updateEmpresaDto);
+    return this.findOne(id);
+  }
+
+  async actualizarLogo(id: number, nombreArchivo: string) {
+    const logoUrl = this.archivosService.construirUrlPublica(
+      'logos',
+      nombreArchivo,
+    );
+    await this.empresaRepository.update(id, { logoUrl });
     return this.findOne(id);
   }
 

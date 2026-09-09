@@ -5,6 +5,7 @@ import { Servicio } from './entities/servicio.entity';
 import { Empresa } from '../empresa/entities/empresa.entity';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
+import { ArchivosService } from '../archivos/archivos.service';
 
 @Injectable()
 export class ServiciosService {
@@ -13,6 +14,7 @@ export class ServiciosService {
     private readonly servicioRepository: Repository<Servicio>,
     @InjectRepository(Empresa)
     private readonly empresaRepository: Repository<Empresa>,
+    private readonly archivosService: ArchivosService,
   ) {}
 
   async create(createServicioDto: CreateServicioDto) {
@@ -41,6 +43,15 @@ export class ServiciosService {
 
   async update(id: number, updateServicioDto: UpdateServicioDto) {
     await this.servicioRepository.update(id, updateServicioDto);
+    return this.findOne(id);
+  }
+
+  async actualizarImagen(id: number, nombreArchivo: string) {
+    const imagenUrl = this.archivosService.construirUrlPublica(
+      'servicios',
+      nombreArchivo,
+    );
+    await this.servicioRepository.update(id, { imagenUrl });
     return this.findOne(id);
   }
 

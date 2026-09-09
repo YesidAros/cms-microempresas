@@ -5,6 +5,7 @@ import { Banner } from './entities/banner.entity';
 import { Empresa } from '../empresa/entities/empresa.entity';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
+import { ArchivosService } from '../archivos/archivos.service';
 
 @Injectable()
 export class BannerService {
@@ -13,6 +14,7 @@ export class BannerService {
     private readonly bannerRepository: Repository<Banner>,
     @InjectRepository(Empresa)
     private readonly empresaRepository: Repository<Empresa>,
+    private readonly archivosService: ArchivosService,
   ) {}
 
   async create(createBannerDto: CreateBannerDto) {
@@ -41,6 +43,15 @@ export class BannerService {
 
   async update(id: number, updateBannerDto: UpdateBannerDto) {
     await this.bannerRepository.update(id, updateBannerDto);
+    return this.findOne(id);
+  }
+
+  async actualizarImagen(id: number, nombreArchivo: string) {
+    const imagenUrl = this.archivosService.construirUrlPublica(
+      'banners',
+      nombreArchivo,
+    );
+    await this.bannerRepository.update(id, { imagenUrl });
     return this.findOne(id);
   }
 

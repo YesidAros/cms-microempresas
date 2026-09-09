@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmpresaModule } from './empresa/empresa.module';
@@ -10,6 +12,7 @@ import { BannerModule } from './banner/banner.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
 import { CorreoModule } from './correo/correo.module';
+import { ArchivosModule } from './archivos/archivos.module';
 
 @Module({
   imports: [
@@ -26,6 +29,10 @@ import { CorreoModule } from './correo/correo.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
+    }),
     EmpresaModule,
     ServiciosModule,
     NoticiasModule,
@@ -33,6 +40,7 @@ import { CorreoModule } from './correo/correo.module';
     UsuarioModule,
     AuthModule,
     CorreoModule,
+    ArchivosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { EmpresaService } from './empresa.service';
 import { CreateEmpresaDto } from './dto/create-empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { crearConfiguracionMulter } from '../archivos/multer-config.util';
 
 @Controller('empresa')
 export class EmpresaController {
@@ -40,6 +44,31 @@ export class EmpresaController {
   @ApiBearerAuth()
   update(@Param('id') id: string, @Body() updateEmpresaDto: UpdateEmpresaDto) {
     return this.empresaService.update(+id, updateEmpresaDto);
+  }
+
+  @Post(':id/logo')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        archivo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('archivo', crearConfiguracionMulter('logos')),
+  )
+  subirLogo(
+    @Param('id') id: string,
+    @UploadedFile() archivo: Express.Multer.File,
+  ) {
+    return this.empresaService.actualizarLogo(+id, archivo.filename);
   }
 
   @Delete(':id')

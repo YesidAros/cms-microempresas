@@ -9,6 +9,7 @@ import { Noticia } from './entities/noticia.entity';
 import { Empresa } from '../empresa/entities/empresa.entity';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
+import { ArchivosService } from '../archivos/archivos.service';
 
 @Injectable()
 export class NoticiasService {
@@ -17,6 +18,7 @@ export class NoticiasService {
     private readonly noticiaRepository: Repository<Noticia>,
     @InjectRepository(Empresa)
     private readonly empresaRepository: Repository<Empresa>,
+    private readonly archivosService: ArchivosService,
   ) {}
 
   async create(createNoticiaDto: CreateNoticiaDto) {
@@ -56,6 +58,15 @@ export class NoticiasService {
 
   async update(id: number, updateNoticiaDto: UpdateNoticiaDto) {
     await this.noticiaRepository.update(id, updateNoticiaDto);
+    return this.findOne(id);
+  }
+
+  async actualizarImagen(id: number, nombreArchivo: string) {
+    const imagenUrl = this.archivosService.construirUrlPublica(
+      'noticias',
+      nombreArchivo,
+    );
+    await this.noticiaRepository.update(id, { imagenUrl });
     return this.findOne(id);
   }
 
