@@ -23,6 +23,8 @@ describe('UsuarioService', () => {
       find: jest.fn(),
       findAndCount: jest.fn(),
       findOne: jest.fn(),
+      findOneBy: jest.fn(),
+      update: jest.fn(),
       delete: jest.fn(),
     };
     empresaRepository = {
@@ -173,6 +175,40 @@ describe('UsuarioService', () => {
         },
       });
       expect(resultado).toEqual(usuarioDePrueba);
+    });
+  });
+
+  describe('findByEmail', () => {
+    it('deberia devolver el usuario por email', async () => {
+      const usuarioDePrueba = { id: 1, email: 'a@a.com', nombre: 'A' };
+      usuarioRepository.findOneBy!.mockResolvedValue(usuarioDePrueba);
+
+      const resultado = await usuarioService.findByEmail('a@a.com');
+
+      expect(usuarioRepository.findOneBy).toHaveBeenCalledWith({
+        email: 'a@a.com',
+      });
+      expect(resultado).toEqual(usuarioDePrueba);
+    });
+
+    it('deberia devolver null si no existe un usuario con ese email', async () => {
+      usuarioRepository.findOneBy!.mockResolvedValue(null);
+
+      const resultado = await usuarioService.findByEmail('no-existe@a.com');
+
+      expect(resultado).toBeNull();
+    });
+  });
+
+  describe('actualizarPassword', () => {
+    it('deberia actualizar el password del usuario por id', async () => {
+      usuarioRepository.update!.mockResolvedValue({ affected: 1 });
+
+      await usuarioService.actualizarPassword(1, 'nuevo-hash');
+
+      expect(usuarioRepository.update).toHaveBeenCalledWith(1, {
+        password: 'nuevo-hash',
+      });
     });
   });
 

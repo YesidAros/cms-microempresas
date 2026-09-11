@@ -88,6 +88,14 @@ export class UsuarioService {
     });
   }
 
+  findByEmail(email: string) {
+    return this.usuarioRepository.findOneBy({ email });
+  }
+
+  async actualizarPassword(id: number, passwordHasheado: string) {
+    await this.usuarioRepository.update(id, { password: passwordHasheado });
+  }
+
   update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
     return `This action updates a #${id} usuario`;
   }
