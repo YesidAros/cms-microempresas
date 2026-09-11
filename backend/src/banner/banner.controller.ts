@@ -17,7 +17,10 @@ import { BannerService } from './banner.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { crearConfiguracionMulter } from '../archivos/multer-config.util';
+import {
+  crearConfiguracionMulter,
+  validarFirmaArchivo,
+} from '../archivos/multer-config.util';
 import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Controller('banner')
@@ -70,6 +73,7 @@ export class BannerController {
     @Param('id') id: string,
     @UploadedFile() archivo: Express.Multer.File,
   ) {
+    validarFirmaArchivo(archivo.path);
     return this.bannerService.actualizarImagen(+id, archivo.filename);
   }
 

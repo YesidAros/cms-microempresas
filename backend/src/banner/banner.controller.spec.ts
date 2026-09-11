@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BannerController } from './banner.controller';
 import { BannerService } from './banner.service';
+import { validarFirmaArchivo } from '../archivos/multer-config.util';
+
+jest.mock('../archivos/multer-config.util');
 
 describe('BannerController', () => {
   let bannerController: BannerController;
@@ -93,8 +96,11 @@ describe('BannerController', () => {
   });
 
   describe('subirImagen', () => {
-    it('deberia llamar a bannerService.actualizarImagen con el id y el nombre del archivo', async () => {
-      const archivoDePrueba = { filename: 'abc.png' } as Express.Multer.File;
+    it('deberia validar la firma del archivo y llamar a bannerService.actualizarImagen con el id y el nombre del archivo', async () => {
+      const archivoDePrueba = {
+        filename: 'abc.png',
+        path: './uploads/banners/abc.png',
+      } as Express.Multer.File;
       const resultadoEsperado = { id: 5, imagenUrl: 'http://.../abc.png' };
       bannerService.actualizarImagen!.mockResolvedValue(resultadoEsperado);
 
@@ -103,6 +109,7 @@ describe('BannerController', () => {
         archivoDePrueba,
       );
 
+      expect(validarFirmaArchivo).toHaveBeenCalledWith(archivoDePrueba.path);
       expect(bannerService.actualizarImagen).toHaveBeenCalledWith(
         5,
         'abc.png',

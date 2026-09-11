@@ -17,7 +17,10 @@ import { NoticiasService } from './noticias.service';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { crearConfiguracionMulter } from '../archivos/multer-config.util';
+import {
+  crearConfiguracionMulter,
+  validarFirmaArchivo,
+} from '../archivos/multer-config.util';
 import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Controller('noticias')
@@ -70,6 +73,7 @@ export class NoticiasController {
     @Param('id') id: string,
     @UploadedFile() archivo: Express.Multer.File,
   ) {
+    validarFirmaArchivo(archivo.path);
     return this.noticiasService.actualizarImagen(+id, archivo.filename);
   }
 

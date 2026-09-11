@@ -1,10 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Controller('usuario')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 

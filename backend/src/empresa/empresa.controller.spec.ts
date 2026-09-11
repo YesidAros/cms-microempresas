@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmpresaController } from './empresa.controller';
 import { EmpresaService } from './empresa.service';
+import { validarFirmaArchivo } from '../archivos/multer-config.util';
+
+jest.mock('../archivos/multer-config.util');
 
 describe('EmpresaController', () => {
   let empresaController: EmpresaController;
@@ -83,8 +86,11 @@ describe('EmpresaController', () => {
   });
 
   describe('subirLogo', () => {
-    it('deberia llamar a empresaService.actualizarLogo con el id y el nombre del archivo', async () => {
-      const archivoDePrueba = { filename: 'abc.png' } as Express.Multer.File;
+    it('deberia validar la firma del archivo y llamar a empresaService.actualizarLogo con el id y el nombre del archivo', async () => {
+      const archivoDePrueba = {
+        filename: 'abc.png',
+        path: './uploads/logos/abc.png',
+      } as Express.Multer.File;
       const resultadoEsperado = { id: 5, logoUrl: 'http://.../abc.png' };
       empresaService.actualizarLogo!.mockResolvedValue(resultadoEsperado);
 
@@ -93,6 +99,7 @@ describe('EmpresaController', () => {
         archivoDePrueba,
       );
 
+      expect(validarFirmaArchivo).toHaveBeenCalledWith(archivoDePrueba.path);
       expect(empresaService.actualizarLogo).toHaveBeenCalledWith(
         5,
         'abc.png',

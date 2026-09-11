@@ -16,7 +16,10 @@ import { EmpresaService } from './empresa.service';
 import { CreateEmpresaDto } from './dto/create-empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { crearConfiguracionMulter } from '../archivos/multer-config.util';
+import {
+  crearConfiguracionMulter,
+  validarFirmaArchivo,
+} from '../archivos/multer-config.util';
 
 @Controller('empresa')
 export class EmpresaController {
@@ -68,6 +71,7 @@ export class EmpresaController {
     @Param('id') id: string,
     @UploadedFile() archivo: Express.Multer.File,
   ) {
+    validarFirmaArchivo(archivo.path);
     return this.empresaService.actualizarLogo(+id, archivo.filename);
   }
 

@@ -17,7 +17,10 @@ import { ServiciosService } from './servicios.service';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { crearConfiguracionMulter } from '../archivos/multer-config.util';
+import {
+  crearConfiguracionMulter,
+  validarFirmaArchivo,
+} from '../archivos/multer-config.util';
 import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Controller('servicios')
@@ -70,6 +73,7 @@ export class ServiciosController {
     @Param('id') id: string,
     @UploadedFile() archivo: Express.Multer.File,
   ) {
+    validarFirmaArchivo(archivo.path);
     return this.serviciosService.actualizarImagen(+id, archivo.filename);
   }
 
