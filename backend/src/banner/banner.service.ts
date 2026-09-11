@@ -6,6 +6,7 @@ import { Empresa } from '../empresa/entities/empresa.entity';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 import { ArchivosService } from '../archivos/archivos.service';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Injectable()
 export class BannerService {
@@ -30,8 +31,21 @@ export class BannerService {
     return this.bannerRepository.save(nuevoBanner);
   }
 
-  findAll() {
-    return this.bannerRepository.find({ relations: { empresa: true } });
+  async findAll(paginacionQueryDto: PaginacionQueryDto) {
+    const { pagina, limite } = paginacionQueryDto;
+    const [data, total] = await this.bannerRepository.findAndCount({
+      relations: { empresa: true },
+      skip: (pagina - 1) * limite,
+      take: limite,
+    });
+
+    return {
+      data,
+      total,
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite),
+    };
   }
 
   findOne(id: number) {

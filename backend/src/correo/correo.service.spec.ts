@@ -26,6 +26,7 @@ describe('CorreoService', () => {
       create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
+      findAndCount: jest.fn(),
       findOne: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -134,16 +135,39 @@ describe('CorreoService', () => {
   });
 
   describe('findAll', () => {
-    it('deberia devolver la lista de correos con su empresa', async () => {
+    it('deberia devolver los correos paginados con su empresa', async () => {
       const listaDePrueba = [{ id: 1 }, { id: 2 }];
-      correoRepository.find!.mockResolvedValue(listaDePrueba);
+      correoRepository.findAndCount!.mockResolvedValue([listaDePrueba, 2]);
 
-      const resultado = await correoService.findAll();
-
-      expect(correoRepository.find).toHaveBeenCalledWith({
-        relations: { empresa: true },
+      const resultado = await correoService.findAll({
+        pagina: 1,
+        limite: 10,
       });
-      expect(resultado).toEqual(listaDePrueba);
+
+      expect(correoRepository.findAndCount).toHaveBeenCalledWith({
+        relations: { empresa: true },
+        skip: 0,
+        take: 10,
+      });
+      expect(resultado).toEqual({
+        data: listaDePrueba,
+        total: 2,
+        pagina: 1,
+        limite: 10,
+        totalPaginas: 1,
+      });
+    });
+
+    it('deberia calcular correctamente el skip para paginas mayores a 1', async () => {
+      correoRepository.findAndCount!.mockResolvedValue([[], 5]);
+
+      await correoService.findAll({ pagina: 2, limite: 2 });
+
+      expect(correoRepository.findAndCount).toHaveBeenCalledWith({
+        relations: { empresa: true },
+        skip: 2,
+        take: 2,
+      });
     });
   });
 

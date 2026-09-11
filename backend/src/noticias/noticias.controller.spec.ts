@@ -46,14 +46,23 @@ describe('NoticiasController', () => {
   });
 
   describe('findAll', () => {
-    it('deberia llamar a noticiasService.findAll', async () => {
-      const listaDePrueba = [{ id: 1 }];
-      noticiasService.findAll!.mockResolvedValue(listaDePrueba);
+    it('deberia llamar a noticiasService.findAll con el dto de paginacion', async () => {
+      const paginacionDto = { pagina: 1, limite: 10 };
+      const resultadoEsperado = {
+        data: [{ id: 1 }],
+        total: 1,
+        pagina: 1,
+        limite: 10,
+        totalPaginas: 1,
+      };
+      noticiasService.findAll!.mockResolvedValue(resultadoEsperado);
 
-      const resultado = await noticiasController.findAll();
+      const resultado = await noticiasController.findAll(
+        paginacionDto as any,
+      );
 
-      expect(noticiasService.findAll).toHaveBeenCalled();
-      expect(resultado).toEqual(listaDePrueba);
+      expect(noticiasService.findAll).toHaveBeenCalledWith(paginacionDto);
+      expect(resultado).toEqual(resultadoEsperado);
     });
   });
 

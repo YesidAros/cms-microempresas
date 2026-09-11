@@ -20,6 +20,7 @@ describe('NoticiasService', () => {
       create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
+      findAndCount: jest.fn(),
       findOne: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -100,16 +101,39 @@ describe('NoticiasService', () => {
   });
 
   describe('findAll', () => {
-    it('deberia devolver la lista de noticias con su empresa', async () => {
+    it('deberia devolver las noticias paginadas con su empresa', async () => {
       const listaDePrueba = [{ id: 1 }, { id: 2 }];
-      noticiaRepository.find!.mockResolvedValue(listaDePrueba);
+      noticiaRepository.findAndCount!.mockResolvedValue([listaDePrueba, 2]);
 
-      const resultado = await noticiasService.findAll();
-
-      expect(noticiaRepository.find).toHaveBeenCalledWith({
-        relations: { empresa: true },
+      const resultado = await noticiasService.findAll({
+        pagina: 1,
+        limite: 10,
       });
-      expect(resultado).toEqual(listaDePrueba);
+
+      expect(noticiaRepository.findAndCount).toHaveBeenCalledWith({
+        relations: { empresa: true },
+        skip: 0,
+        take: 10,
+      });
+      expect(resultado).toEqual({
+        data: listaDePrueba,
+        total: 2,
+        pagina: 1,
+        limite: 10,
+        totalPaginas: 1,
+      });
+    });
+
+    it('deberia calcular correctamente el skip para paginas mayores a 1', async () => {
+      noticiaRepository.findAndCount!.mockResolvedValue([[], 5]);
+
+      await noticiasService.findAll({ pagina: 2, limite: 2 });
+
+      expect(noticiaRepository.findAndCount).toHaveBeenCalledWith({
+        relations: { empresa: true },
+        skip: 2,
+        take: 2,
+      });
     });
   });
 

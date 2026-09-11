@@ -6,6 +6,7 @@ import { Usuario } from './entities/usuario.entity';
 import { Empresa } from '../empresa/entities/empresa.entity';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -50,8 +51,21 @@ export class UsuarioService {
     return usuarioSinPassword;
   }
 
-  findAll() {
-    return this.usuarioRepository.find({ relations: { empresa: true } });
+  async findAll(paginacionQueryDto: PaginacionQueryDto) {
+    const { pagina, limite } = paginacionQueryDto;
+    const [data, total] = await this.usuarioRepository.findAndCount({
+      relations: { empresa: true },
+      skip: (pagina - 1) * limite,
+      take: limite,
+    });
+
+    return {
+      data,
+      total,
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite),
+    };
   }
 
   findOne(id: number) {

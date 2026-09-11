@@ -21,6 +21,7 @@ describe('UsuarioService', () => {
       create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
+      findAndCount: jest.fn(),
       findOne: jest.fn(),
       delete: jest.fn(),
     };
@@ -98,16 +99,39 @@ describe('UsuarioService', () => {
   });
 
   describe('findAll', () => {
-    it('deberia devolver la lista de usuarios con su empresa', async () => {
-      const listaDePrueba = [{ id: 1, email: 'a@a.com' }];
-      usuarioRepository.find!.mockResolvedValue(listaDePrueba);
+    it('deberia devolver los usuarios paginados con su empresa', async () => {
+      const listaDePrueba = [{ id: 1 }, { id: 2 }];
+      usuarioRepository.findAndCount!.mockResolvedValue([listaDePrueba, 2]);
 
-      const resultado = await usuarioService.findAll();
-
-      expect(usuarioRepository.find).toHaveBeenCalledWith({
-        relations: { empresa: true },
+      const resultado = await usuarioService.findAll({
+        pagina: 1,
+        limite: 10,
       });
-      expect(resultado).toEqual(listaDePrueba);
+
+      expect(usuarioRepository.findAndCount).toHaveBeenCalledWith({
+        relations: { empresa: true },
+        skip: 0,
+        take: 10,
+      });
+      expect(resultado).toEqual({
+        data: listaDePrueba,
+        total: 2,
+        pagina: 1,
+        limite: 10,
+        totalPaginas: 1,
+      });
+    });
+
+    it('deberia calcular correctamente el skip para paginas mayores a 1', async () => {
+      usuarioRepository.findAndCount!.mockResolvedValue([[], 5]);
+
+      await usuarioService.findAll({ pagina: 2, limite: 2 });
+
+      expect(usuarioRepository.findAndCount).toHaveBeenCalledWith({
+        relations: { empresa: true },
+        skip: 2,
+        take: 2,
+      });
     });
   });
 

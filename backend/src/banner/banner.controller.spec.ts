@@ -46,14 +46,21 @@ describe('BannerController', () => {
   });
 
   describe('findAll', () => {
-    it('deberia llamar a bannerService.findAll', async () => {
-      const listaDePrueba = [{ id: 1 }];
-      bannerService.findAll!.mockResolvedValue(listaDePrueba);
+    it('deberia llamar a bannerService.findAll con el dto de paginacion', async () => {
+      const paginacionDto = { pagina: 1, limite: 10 };
+      const resultadoEsperado = {
+        data: [{ id: 1 }],
+        total: 1,
+        pagina: 1,
+        limite: 10,
+        totalPaginas: 1,
+      };
+      bannerService.findAll!.mockResolvedValue(resultadoEsperado);
 
-      const resultado = await bannerController.findAll();
+      const resultado = await bannerController.findAll(paginacionDto as any);
 
-      expect(bannerService.findAll).toHaveBeenCalled();
-      expect(resultado).toEqual(listaDePrueba);
+      expect(bannerService.findAll).toHaveBeenCalledWith(paginacionDto);
+      expect(resultado).toEqual(resultadoEsperado);
     });
   });
 

@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { crearConfiguracionMulter } from '../archivos/multer-config.util';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Controller('servicios')
 export class ServiciosController {
@@ -30,8 +32,8 @@ export class ServiciosController {
   }
 
   @Get()
-  findAll() {
-    return this.serviciosService.findAll();
+  findAll(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    return this.serviciosService.findAll(paginacionQueryDto);
   }
 
   @Get(':id')

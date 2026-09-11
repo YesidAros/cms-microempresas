@@ -50,14 +50,21 @@ describe('CorreoController', () => {
   });
 
   describe('findAll', () => {
-    it('deberia llamar a correoService.findAll', async () => {
-      const listaDePrueba = [{ id: 1 }];
-      correoService.findAll!.mockResolvedValue(listaDePrueba);
+    it('deberia llamar a correoService.findAll con el dto de paginacion', async () => {
+      const paginacionDto = { pagina: 1, limite: 10 };
+      const resultadoEsperado = {
+        data: [{ id: 1 }],
+        total: 1,
+        pagina: 1,
+        limite: 10,
+        totalPaginas: 1,
+      };
+      correoService.findAll!.mockResolvedValue(resultadoEsperado);
 
-      const resultado = await correoController.findAll();
+      const resultado = await correoController.findAll(paginacionDto as any);
 
-      expect(correoService.findAll).toHaveBeenCalled();
-      expect(resultado).toEqual(listaDePrueba);
+      expect(correoService.findAll).toHaveBeenCalledWith(paginacionDto);
+      expect(resultado).toEqual(resultadoEsperado);
     });
   });
 

@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { crearConfiguracionMulter } from '../archivos/multer-config.util';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Controller('noticias')
 export class NoticiasController {
@@ -30,8 +32,8 @@ export class NoticiasController {
   }
 
   @Get()
-  findAll() {
-    return this.noticiasService.findAll();
+  findAll(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    return this.noticiasService.findAll(paginacionQueryDto);
   }
 
   @Get(':id')

@@ -50,14 +50,21 @@ describe('UsuarioController', () => {
   });
 
   describe('findAll', () => {
-    it('deberia llamar a usuarioService.findAll y devolver el resultado', async () => {
-      const listaDePrueba = [{ id: 1 }, { id: 2 }];
-      usuarioService.findAll!.mockResolvedValue(listaDePrueba);
+    it('deberia llamar a usuarioService.findAll con el dto de paginacion', async () => {
+      const paginacionDto = { pagina: 1, limite: 10 };
+      const resultadoEsperado = {
+        data: [{ id: 1 }, { id: 2 }],
+        total: 2,
+        pagina: 1,
+        limite: 10,
+        totalPaginas: 1,
+      };
+      usuarioService.findAll!.mockResolvedValue(resultadoEsperado);
 
-      const resultado = await usuarioController.findAll();
+      const resultado = await usuarioController.findAll(paginacionDto as any);
 
-      expect(usuarioService.findAll).toHaveBeenCalled();
-      expect(resultado).toEqual(listaDePrueba);
+      expect(usuarioService.findAll).toHaveBeenCalledWith(paginacionDto);
+      expect(resultado).toEqual(resultadoEsperado);
     });
   });
 

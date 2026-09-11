@@ -10,6 +10,7 @@ import { Empresa } from '../empresa/entities/empresa.entity';
 import { CreateNoticiaDto } from './dto/create-noticia.dto';
 import { UpdateNoticiaDto } from './dto/update-noticia.dto';
 import { ArchivosService } from '../archivos/archivos.service';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Injectable()
 export class NoticiasService {
@@ -45,8 +46,21 @@ export class NoticiasService {
     }
   }
 
-  findAll() {
-    return this.noticiaRepository.find({ relations: { empresa: true } });
+  async findAll(paginacionQueryDto: PaginacionQueryDto) {
+    const { pagina, limite } = paginacionQueryDto;
+    const [data, total] = await this.noticiaRepository.findAndCount({
+      relations: { empresa: true },
+      skip: (pagina - 1) * limite,
+      take: limite,
+    });
+
+    return {
+      data,
+      total,
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite),
+    };
   }
 
   findOne(id: number) {

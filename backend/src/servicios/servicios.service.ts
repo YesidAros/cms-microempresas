@@ -6,6 +6,7 @@ import { Empresa } from '../empresa/entities/empresa.entity';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
 import { ArchivosService } from '../archivos/archivos.service';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Injectable()
 export class ServiciosService {
@@ -30,8 +31,21 @@ export class ServiciosService {
     return this.servicioRepository.save(nuevoServicio);
   }
 
-  findAll() {
-    return this.servicioRepository.find({ relations: { empresa: true } });
+  async findAll(paginacionQueryDto: PaginacionQueryDto) {
+    const { pagina, limite } = paginacionQueryDto;
+    const [data, total] = await this.servicioRepository.findAndCount({
+      relations: { empresa: true },
+      skip: (pagina - 1) * limite,
+      take: limite,
+    });
+
+    return {
+      data,
+      total,
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite),
+    };
   }
 
   findOne(id: number) {

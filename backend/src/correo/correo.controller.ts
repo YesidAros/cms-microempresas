@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { CorreoService } from './correo.service';
 import { CreateCorreoDto } from './dto/create-correo.dto';
 import { UpdateCorreoDto } from './dto/update-correo.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Controller('correo')
 export class CorreoController {
@@ -26,8 +28,8 @@ export class CorreoController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findAll() {
-    return this.correoService.findAll();
+  findAll(@Query() paginacionQueryDto: PaginacionQueryDto) {
+    return this.correoService.findAll(paginacionQueryDto);
   }
 
   @Get(':id')

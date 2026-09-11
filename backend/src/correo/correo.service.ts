@@ -8,6 +8,7 @@ import { UpdateCorreoDto } from './dto/update-correo.dto';
 import { NotificacionesService } from '../notificaciones/notificaciones.service';
 import { plantillaMensajeContacto } from '../notificaciones/plantillas/mensaje-contacto.plantilla';
 import { renderizarPlantillaPersonalizada } from '../notificaciones/plantillas/renderizar-plantilla.util';
+import { PaginacionQueryDto } from '../shared/dto/paginacion-query.dto';
 
 @Injectable()
 export class CorreoService {
@@ -68,8 +69,21 @@ export class CorreoService {
     return correoGuardado;
   }
 
-  findAll() {
-    return this.correoRepository.find({ relations: { empresa: true } });
+  async findAll(paginacionQueryDto: PaginacionQueryDto) {
+    const { pagina, limite } = paginacionQueryDto;
+    const [data, total] = await this.correoRepository.findAndCount({
+      relations: { empresa: true },
+      skip: (pagina - 1) * limite,
+      take: limite,
+    });
+
+    return {
+      data,
+      total,
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite),
+    };
   }
 
   findOne(id: number) {
