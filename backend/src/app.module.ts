@@ -17,12 +17,14 @@ import { AuthModule } from './auth/auth.module';
 import { CorreoModule } from './correo/correo.module';
 import { ArchivosModule } from './archivos/archivos.module';
 import { HealthModule } from './health/health.module';
+import { esquemaValidacionEnv } from './config/env.validation';
 
 @Module({
   imports: [
     SentryModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: esquemaValidacionEnv,
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
