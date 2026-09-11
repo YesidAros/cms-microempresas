@@ -16,6 +16,7 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
 import { CorreoModule } from './correo/correo.module';
 import { ArchivosModule } from './archivos/archivos.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ArchivosModule } from './archivos/archivos.module';
     AuthModule,
     CorreoModule,
     ArchivosModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
