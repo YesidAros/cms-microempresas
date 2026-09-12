@@ -19,6 +19,7 @@ import { CorreoModule } from './correo/correo.module';
 import { ArchivosModule } from './archivos/archivos.module';
 import { HealthModule } from './health/health.module';
 import { esquemaValidacionEnv } from './config/env.validation';
+import { TestimoniosModule } from './testimonios/testimonios.module';
 
 @Module({
   imports: [
@@ -52,6 +53,8 @@ import { esquemaValidacionEnv } from './config/env.validation';
     NoticiasModule,
     BannerModule,
     ClientesModule,
+    ClientesModule,
+    TestimoniosModule,
     UsuarioModule,
     AuthModule,
     CorreoModule,
