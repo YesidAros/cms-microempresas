@@ -1,6 +1,6 @@
 # Chuleta de comandos — Proyecto CMS
 
-#### Para retomar el proyecto después de un tiempo
+#### Para retomar el proyecto después de un tiempo ########
 
 1. Abre Docker Desktop o ejecuta desde consola
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
@@ -14,7 +14,7 @@ Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
    npm run start:dev
 5. Abre http://localhost:3000 para verificar.
 
-#### Docker
+#### Docker #####
 - Levantar contenedores:        docker compose up -d
 - Ver contenedores corriendo:   docker ps
 - Parar (sin borrar datos):     docker compose stop
@@ -24,18 +24,19 @@ Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 - Entrar a psql dentro del contenedor:
   docker exec -it cms-postgres psql -U cms_user -d cms_db
 
-#### Git
+#### Git #####
 - Ver estado:              git status
 - Ver remoto configurado:  git remote -v
 - Agregar y confirmar:     git add .
                            git commit -m "mensaje"
 - Subir a GitHub:          git push
+- Restaurar Archivo:       git checkout -- src/usuario/usuario.controller.spec.ts
 
-#### NestJS (dentro de la carpeta backend)
+#### NestJS (dentro de la carpeta backend) ####
 - Arrancar en modo desarrollo:  npm run start:dev
 - Instalar una dependencia:     npm install <paquete>
 
-#### Comandos Consola para archivos
+#### Comandos Consola para archivos #####
 # Crear un archivo vacío
 New-Item -ItemType File -Name "archivo.txt"
 
@@ -55,7 +56,7 @@ Rename-Item "nombreviejo.txt" "nombrenuevo.txt"
 Move-Item "origen.txt" "destino.txt"
 Copy-Item "origen.txt" "destino.txt"
 
-# SQL CONSOLA
+#### SQL CONSOLA ####
 1. docker exec -it cms-postgres psql -U cms_user -d cms_db
 2. eje: SELECT * FROM empresa;
 3. \dt — lista todas las tablas.
