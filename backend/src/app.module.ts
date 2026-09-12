@@ -12,6 +12,7 @@ import { EmpresaModule } from './empresa/empresa.module';
 import { ServiciosModule } from './servicios/servicios.module';
 import { NoticiasModule } from './noticias/noticias.module';
 import { BannerModule } from './banner/banner.module';
+import { ClientesModule } from './clientes/clientes.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
 import { CorreoModule } from './correo/correo.module';
@@ -50,6 +51,7 @@ import { esquemaValidacionEnv } from './config/env.validation';
     ServiciosModule,
     NoticiasModule,
     BannerModule,
+    ClientesModule,
     UsuarioModule,
     AuthModule,
     CorreoModule,
