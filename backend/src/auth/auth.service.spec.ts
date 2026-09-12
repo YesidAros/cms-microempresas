@@ -17,6 +17,7 @@ describe('AuthService', () => {
   let usuarioService: {
     findByEmailConPassword: jest.Mock;
     findByEmail: jest.Mock;
+    findByIdConPassword: jest.Mock;
     actualizarPassword: jest.Mock;
   };
   let jwtService: { sign: jest.Mock };
@@ -41,6 +42,7 @@ describe('AuthService', () => {
     usuarioService = {
       findByEmailConPassword: jest.fn(),
       findByEmail: jest.fn(),
+      findByIdConPassword: jest.fn(),
       actualizarPassword: jest.fn(),
     };
     jwtService = {
@@ -236,6 +238,56 @@ describe('AuthService', () => {
       expect(tokenGuardado.usado).toBe(true);
       expect(passwordResetTokenRepository.save).toHaveBeenCalledWith(
         tokenGuardado,
+      );
+      expect(resultado).toEqual({
+        mensaje: 'Contraseña actualizada correctamente',
+      });
+    });
+  });
+
+  describe('cambiarPassword', () => {
+    it('deberia lanzar UnauthorizedException si el usuario no existe', async () => {
+      usuarioService.findByIdConPassword.mockResolvedValue(null);
+
+      await expect(
+        authService.cambiarPassword(999, 'cualquier-cosa', 'nuevaClave123'),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(usuarioService.actualizarPassword).not.toHaveBeenCalled();
+    });
+
+    it('deberia lanzar UnauthorizedException si la contraseña actual es incorrecta', async () => {
+      usuarioService.findByIdConPassword.mockResolvedValue(usuarioDePrueba);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
+      await expect(
+        authService.cambiarPassword(
+          usuarioDePrueba.id,
+          'password-incorrecto',
+          'nuevaClave123',
+        ),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(usuarioService.actualizarPassword).not.toHaveBeenCalled();
+    });
+
+    it('deberia actualizar la contraseña si la contraseña actual es correcta', async () => {
+      usuarioService.findByIdConPassword.mockResolvedValue(usuarioDePrueba);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      (bcrypt.hash as jest.Mock).mockResolvedValue('nuevo-hash-falso');
+
+      const resultado = await authService.cambiarPassword(
+        usuarioDePrueba.id,
+        'password-correcto',
+        'nuevaClave123',
+      );
+
+      expect(bcrypt.compare).toHaveBeenCalledWith(
+        'password-correcto',
+        usuarioDePrueba.password,
+      );
+      expect(bcrypt.hash).toHaveBeenCalledWith('nuevaClave123', 10);
+      expect(usuarioService.actualizarPassword).toHaveBeenCalledWith(
+        usuarioDePrueba.id,
+        'nuevo-hash-falso',
       );
       expect(resultado).toEqual({
         mensaje: 'Contraseña actualizada correctamente',

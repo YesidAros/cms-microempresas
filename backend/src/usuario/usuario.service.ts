@@ -88,6 +88,19 @@ export class UsuarioService {
     });
   }
 
+  findByIdConPassword(id: number) {
+    return this.usuarioRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        nombre: true,
+        rol: true,
+      },
+    });
+  }
+
   findByEmail(email: string) {
     return this.usuarioRepository.findOneBy({ email });
   }

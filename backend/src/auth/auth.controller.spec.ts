@@ -8,6 +8,7 @@ describe('AuthController', () => {
     login: jest.Mock;
     solicitarRecuperacion: jest.Mock;
     restablecerPassword: jest.Mock;
+    cambiarPassword: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -15,6 +16,7 @@ describe('AuthController', () => {
       login: jest.fn(),
       solicitarRecuperacion: jest.fn(),
       restablecerPassword: jest.fn(),
+      cambiarPassword: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -77,6 +79,34 @@ describe('AuthController', () => {
       expect(authService.restablecerPassword).toHaveBeenCalledWith(
         'token-de-prueba',
         'nuevaClave123',
+      );
+      expect(resultado).toEqual(mensajeEsperado);
+    });
+  });
+
+  describe('cambiarPassword', () => {
+    it('deberia delegar en authService.cambiarPassword con el id del usuario autenticado y las passwords del dto', async () => {
+      const mensajeEsperado = {
+        mensaje: 'Contraseña actualizada correctamente',
+      };
+      authService.cambiarPassword.mockResolvedValue(mensajeEsperado);
+
+      const requestDePrueba = {
+        user: { id: 1, email: 'admin@miempresa.com', rol: 'admin' },
+      } as any;
+
+      const resultado = await authController.cambiarPassword(
+        requestDePrueba,
+        {
+          passwordActual: 'claveActual123',
+          passwordNueva: 'claveNueva123',
+        } as any,
+      );
+
+      expect(authService.cambiarPassword).toHaveBeenCalledWith(
+        1,
+        'claveActual123',
+        'claveNueva123',
       );
       expect(resultado).toEqual(mensajeEsperado);
     });

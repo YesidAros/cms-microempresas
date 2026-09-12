@@ -120,4 +120,30 @@ export class AuthService {
 
     return { mensaje: 'Contraseña actualizada correctamente' };
   }
+
+  async cambiarPassword(
+    id: number,
+    passwordActual: string,
+    passwordNueva: string,
+  ) {
+    const usuario = await this.usuarioService.findByIdConPassword(id);
+
+    if (!usuario) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    const passwordValido = await bcrypt.compare(
+      passwordActual,
+      usuario.password,
+    );
+
+    if (!passwordValido) {
+      throw new UnauthorizedException('La contraseña actual no es correcta');
+    }
+
+    const passwordHasheado = await bcrypt.hash(passwordNueva, 10);
+    await this.usuarioService.actualizarPassword(usuario.id, passwordHasheado);
+
+    return { mensaje: 'Contraseña actualizada correctamente' };
+  }
 }

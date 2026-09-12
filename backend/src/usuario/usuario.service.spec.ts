@@ -178,6 +178,31 @@ describe('UsuarioService', () => {
     });
   });
 
+  describe('findByIdConPassword', () => {
+    it('deberia devolver el usuario por id incluyendo el password', async () => {
+      const usuarioDePrueba = {
+        id: 1,
+        email: 'a@a.com',
+        password: 'hash-falso',
+      };
+      usuarioRepository.findOne!.mockResolvedValue(usuarioDePrueba);
+
+      const resultado = await usuarioService.findByIdConPassword(1);
+
+      expect(usuarioRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 1 },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+          nombre: true,
+          rol: true,
+        },
+      });
+      expect(resultado).toEqual(usuarioDePrueba);
+    });
+  });
+
   describe('findByEmail', () => {
     it('deberia devolver el usuario por email', async () => {
       const usuarioDePrueba = { id: 1, email: 'a@a.com', nombre: 'A' };
